@@ -107,10 +107,10 @@ export default function LogicalHazardsPage() {
       <div className="grid lg:grid-cols-2 gap-8">
         <div>
           <h3 className="text-lg font-semibold mb-4">Time-Space Diagram</h3>
-          <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 overflow-x-auto">
-            <div className="min-w-[600px]">
+          <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800">
+            <div className="w-full">
               <div className="flex mb-2">
-                <div className="w-32 flex-shrink-0 text-xs text-zinc-500 text-right pr-2">Cycle→</div>
+                <div className="w-28 flex-shrink-0 text-xs text-zinc-500 text-right pr-2">Cycle→</div>
                 <div className="flex flex-1">
                   {[...Array(totalCycles)].map((_, c) => (
                     <div
@@ -127,7 +127,7 @@ export default function LogicalHazardsPage() {
 
               {hazard.instructions.map((inst, i) => (
                 <div key={i} className="flex mb-1">
-                  <div className="w-32 flex-shrink-0 text-xs font-mono truncate pr-2 text-zinc-300 text-right">
+                  <div className="w-28 flex-shrink-0 text-xs font-mono truncate pr-2 text-zinc-300 text-right">
                     {inst.name}
                   </div>
                   <div className="flex flex-1">
