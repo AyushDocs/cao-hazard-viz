@@ -112,7 +112,12 @@ export default function LogicalHazardsPage() {
               <div className="flex mb-2">
                 <div className="w-28 text-xs text-zinc-500">Cycle→</div>
                 {[...Array(totalCycles)].map((_, c) => (
-                  <div key={c} className="flex-1 text-center text-xs text-zinc-500">
+                  <div
+                    key={c}
+                    className={`flex-1 text-center text-xs ${
+                      c === cycle ? "text-indigo-400 font-bold" : "text-zinc-500"
+                    }`}
+                  >
                     {c}
                   </div>
                 ))}
@@ -139,7 +144,7 @@ export default function LogicalHazardsPage() {
                               : isExecuting
                               ? "bg-zinc-800 border-zinc-700 text-zinc-400"
                               : "bg-zinc-900 border-zinc-800"
-                          }`}
+                          } ${isCurrentCycle ? "ring-2 ring-indigo-500" : ""}`}
                         >
                           {content}
                         </div>
@@ -154,16 +159,21 @@ export default function LogicalHazardsPage() {
           <div className="flex gap-2 mt-4">
             <button
               onClick={() => setCycle(Math.max(0, cycle - 1))}
-              className="px-4 py-2 bg-zinc-800 rounded-lg hover:bg-zinc-700"
+              disabled={cycle === 0}
+              className="px-4 py-2 bg-zinc-800 rounded-lg hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               ← Previous
             </button>
             <button
-              onClick={() => setCycle(cycle + 1)}
-              className="px-4 py-2 bg-indigo-600 rounded-lg hover:bg-indigo-500"
+              onClick={() => setCycle(Math.min(totalCycles - 1, cycle + 1))}
+              disabled={cycle >= totalCycles - 1}
+              className="px-4 py-2 bg-indigo-600 rounded-lg hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next Cycle →
             </button>
+            <div className="ml-auto px-3 py-2 bg-zinc-800 rounded-lg text-sm">
+              Cycle: <span className="font-bold text-indigo-400">{cycle}</span>
+            </div>
           </div>
         </div>
 
