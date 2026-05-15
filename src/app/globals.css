@@ -1,26 +1,74 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --if-color: #3b82f6;
+  --id-color: #22c55e;
+  --ex-color: #eab308;
+  --mem-color: #f97316;
+  --wb-color: #a855f7;
+  --hazard-color: #ef4444;
+  --resolved-color: #22c55e;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.pipeline-stage-if { background: var(--if-color); }
+.pipeline-stage-id { background: var(--id-color); }
+.pipeline-stage-ex { background: var(--ex-color); }
+.pipeline-stage-mem { background: var(--mem-color); }
+.pipeline-stage-wb { background: var(--wb-color); }
+
+.hazard-pulse {
+  animation: hazardPulse 1s ease-in-out infinite;
+}
+
+@keyframes hazardPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+}
+
+.instruction-enter {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.dependency-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawLine 1s ease-out forwards;
+}
+
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+
+.bubble {
+  animation: bubbleMove 0.5s ease-out;
+}
+
+@keyframes bubbleMove {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.stall-bubble {
+  background: repeating-linear-gradient(
+    45deg,
+    #ef4444,
+    #ef4444 10px,
+    #dc2626 10px,
+    #dc2626 20px
+  );
+  animation: stallShimmer 1s linear infinite;
+}
+
+@keyframes stallShimmer {
+  from { background-position: 0 0; }
+  to { background-position: 56px 0; }
 }
