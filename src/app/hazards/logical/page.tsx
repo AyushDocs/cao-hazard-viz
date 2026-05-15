@@ -10,6 +10,11 @@ const hazardTypes = [
     color: "red",
     example: `add $t0, $t1, $t2  # writes $t0
 sub $t3, $t0, $t4  # reads $t0 - STALL until add writes back`,
+    instructions: [
+      { name: "I1: add $t0, $t1, $t2", start: 0 },
+      { name: "I2: sub $t3, $t0, $t4", start: 1, hasHazard: true },
+    ],
+    stallCycles: 2,
   },
   {
     name: "WAR - Write After Read",
@@ -18,6 +23,11 @@ sub $t3, $t0, $t4  # reads $t0 - STALL until add writes back`,
     color: "yellow",
     example: `lw $t0, 0($t1)    # reads $t1
 add $t1, $t2, $t3  # writes $t1 - only in out-of-order execution`,
+    instructions: [
+      { name: "I1: lw $t0, 0($t1)", start: 0 },
+      { name: "I2: add $t1, $t2, $t3", start: 1, hasHazard: true },
+    ],
+    stallCycles: 0,
   },
   {
     name: "RAR - Read After Read",
@@ -26,6 +36,11 @@ add $t1, $t2, $t3  # writes $t1 - only in out-of-order execution`,
     color: "blue",
     example: `add $t0, $t1, $t2  # writes $t0
 add $t0, $t3, $t4  # writes $t0 - must preserve order`,
+    instructions: [
+      { name: "I1: add $t0, $t1, $t2", start: 0 },
+      { name: "I2: add $t0, $t3, $t4", start: 1, hasHazard: true },
+    ],
+    stallCycles: 0,
   },
 ];
 
@@ -35,19 +50,33 @@ export default function LogicalHazardsPage() {
 
   const hazard = hazardTypes[selectedHazard];
   const stages = ["IF", "ID", "EX", "MEM", "WB"];
+  
+  const totalCycles = hazard.instructions.length + 4 + hazard.stallCycles;
 
-  const instructions = [
-    { name: "I1: add $t0, $t1, $t2", cycles: [0, 1, 2, 3, 4] },
-    { name: "I2: sub $t3, $t0, $t4", cycles: [1, 2, 3, 4, 5] },
-  ];
-
-  const hazardCycle = selectedHazard === 0 ? 2 : selectedHazard === 1 ? 1 : 1;
+  const getCellContent = (instIndex: number, cycleNum: number) => {
+    const inst = hazard.instructions[instIndex];
+    const startCycle = inst.start;
+    
+    if (cycleNum < startCycle) return "";
+    
+    const offset = cycleNum - startCycle;
+    if (offset > 4) return "";
+    
+    const stageIndex = offset;
+    if (inst.hasHazard && hazard.stallCycles > 0) {
+      if ((instIndex === 1) && (cycleNum === startCycle + 1 || cycleNum === startCycle + 2)) {
+        return "STALL";
+      }
+    }
+    
+    return stages[stageIndex];
+  };
 
   return (
     <div className="max-w-5xl mx-auto">
-      <h1 className="text-4xl font-bold mb-4">Logical (Data) Hazards</h1>
+      <h1 className="text-4xl font-bold mb-4">Data Hazards</h1>
       <p className="text-zinc-400 mb-8">
-        Logical hazards occur when instructions depend on the results of previous
+        Data hazards occur when instructions depend on the results of previous
         instructions still in the pipeline. These are the most common type of hazard
         in modern processors.
       </p>
@@ -77,33 +106,42 @@ export default function LogicalHazardsPage() {
 
       <div className="grid lg:grid-cols-2 gap-8">
         <div>
-          <h3 className="text-lg font-semibold mb-4">Pipeline with {hazard.abbrev}</h3>
-          <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800">
-            <div className="flex flex-col gap-2">
-              {instructions.map((inst, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <div className="w-8 text-xs font-mono text-zinc-400">{i + 1}</div>
-                  <div className="w-32 text-xs font-mono truncate text-zinc-300">
+          <h3 className="text-lg font-semibold mb-4">Time-Space Diagram</h3>
+          <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 overflow-x-auto">
+            <div className="min-w-[500px]">
+              <div className="flex mb-2">
+                <div className="w-28 text-xs text-zinc-500">Cycle→</div>
+                {[...Array(totalCycles)].map((_, c) => (
+                  <div key={c} className="flex-1 text-center text-xs text-zinc-500">
+                    {c}
+                  </div>
+                ))}
+              </div>
+
+              {hazard.instructions.map((inst, i) => (
+                <div key={i} className="flex mb-1">
+                  <div className="w-28 text-xs font-mono truncate pr-2 text-zinc-300">
                     {inst.name}
                   </div>
                   <div className="flex-1 flex gap-1">
-                    {inst.cycles.map((c) => {
-                      const isHazard = c === hazardCycle && i === 1 && selectedHazard === 0;
-                      const isStalled = c < hazardCycle + i && i === 1 && selectedHazard === 0 && c < 4;
+                    {[...Array(totalCycles)].map((_, c) => {
+                      const content = getCellContent(i, c);
+                      const isCurrentCycle = c === cycle;
+                      const isStall = content === "STALL";
+                      const isExecuting = content !== "" && content !== "STALL";
+                      
                       return (
                         <div
                           key={c}
-                          className={`h-8 rounded flex items-center justify-center text-xs font-medium transition-all ${
-                            isStalled
-                              ? "bg-zinc-700"
-                              : i === 0
-                              ? "bg-green-500"
-                              : isHazard
-                              ? "hazard-pulse bg-red-500"
-                              : "bg-purple-500"
+                          className={`h-8 rounded flex items-center justify-center text-xs font-medium border ${
+                            isStall
+                              ? "bg-zinc-800 border-red-500 text-red-400"
+                              : isExecuting
+                              ? "bg-zinc-800 border-zinc-700 text-zinc-400"
+                              : "bg-zinc-900 border-zinc-800"
                           }`}
                         >
-                          {stages[c - i] || ""}
+                          {content}
                         </div>
                       );
                     })}
@@ -147,13 +185,13 @@ export default function LogicalHazardsPage() {
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 rounded-lg bg-red-900/20 border border-red-800">
             <div className="text-red-400 font-bold text-lg">RAW</div>
-            <div className="text-sm text-zinc-400 mt-1">Most common - True dependency</div>
-            <div className="text-xs text-zinc-500 mt-2">Must stall or forward</div>
+            <div className="text-sm text-zinc-400 mt-1">True dependency</div>
+            <div className="text-xs text-zinc-500 mt-2">Most common - needs stall/forward</div>
           </div>
           <div className="p-4 rounded-lg bg-yellow-900/20 border border-yellow-800">
             <div className="text-yellow-400 font-bold text-lg">WAR</div>
             <div className="text-sm text-zinc-400 mt-1">Anti-dependency</div>
-            <div className="text-xs text-zinc-500 mt-2">Only in out-of-order</div>
+            <div className="text-xs text-zinc-500 mt-2">Only in out-of-order execution</div>
           </div>
           <div className="p-4 rounded-lg bg-blue-900/20 border border-blue-800">
             <div className="text-blue-400 font-bold text-lg">RAR</div>

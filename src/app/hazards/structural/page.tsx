@@ -124,24 +124,25 @@ export default function StructuralHazardsPage() {
                     {[0, 1, 2, 3, 4, 5, 6, 7].map((c) => {
                       const inCycle = inst.cycles.includes(c);
                       const hasHazard = inst.hazard === c;
+                      const stageNames = ["IF", "ID", "EX", "MEM", "WB"];
+                      const stageIdx = inst.cycles.indexOf(c);
+                      const stageName = inCycle ? stageNames[stageIdx] : "";
                       return (
                         <div
                           key={c}
-                          className={`h-6 rounded flex items-center justify-center text-xs ${
+                          className={`h-6 rounded flex items-center justify-center text-xs border ${
                             inCycle
-                              ? i === 0
-                                ? "bg-orange-500"
-                                : i === 1
-                                ? "bg-yellow-500"
-                                : "bg-blue-500"
-                              : "bg-zinc-800"
+                              ? "bg-zinc-800 border-zinc-700"
+                              : "bg-zinc-900 border-zinc-800"
                           } ${
                             hasHazard && cycle >= c
-                              ? "hazard-pulse border-2 border-red-500"
+                              ? "border-red-500"
                               : ""
                           }`}
                         >
-                          {hasHazard && cycle >= c ? "!" : ""}
+                          <span className={inCycle ? "text-zinc-400" : "text-zinc-600"}>
+                            {stageName}
+                          </span>
                         </div>
                       );
                     })}

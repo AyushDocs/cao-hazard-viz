@@ -2,13 +2,13 @@ import Link from "next/link";
 
 const hazards = [
   {
-    title: "Control Hazards",
-    href: "/hazards/control",
+    title: "Data Hazards",
+    href: "/hazards/logical",
     description:
-      "Occur when the pipeline must stall due to branch instructions. The processor doesn't know the next instruction until the branch is resolved.",
+      "Occur when instructions depend on the results of previous instructions still in the pipeline. Includes RAW, WAR, and RAR hazards.",
     stages: ["IF", "ID", "EX", "MEM", "WB"],
-    example: "beq $t0, $t1, target",
-    color: "blue",
+    example: "add $t0, $t1, $t2",
+    color: "yellow",
   },
   {
     title: "Structural Hazards",
@@ -20,13 +20,13 @@ const hazards = [
     color: "orange",
   },
   {
-    title: "Logical (Data) Hazards",
-    href: "/hazards/logical",
+    title: "Control Hazards",
+    href: "/hazards/control",
     description:
-      "Occur when instructions depend on the results of previous instructions still in the pipeline. Includes RAW, WAR, and RAR hazards.",
+      "Occur when the pipeline must stall due to branch instructions. The processor doesn't know the next instruction until the branch is resolved.",
     stages: ["IF", "ID", "EX", "MEM", "WB"],
-    example: "add $t0, $t1, $t2",
-    color: "yellow",
+    example: "beq $t0, $t1, target",
+    color: "blue",
   },
 ];
 

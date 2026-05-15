@@ -2,10 +2,10 @@ import Link from "next/link";
 
 const topics = [
   {
-    title: "Control Hazards",
-    description: "Branch prediction, delay slots, and pipeline penalties",
-    href: "/hazards/control",
-    color: "bg-blue-500",
+    title: "Data Hazards",
+    description: "RAW, WAR, and RAR data dependencies",
+    href: "/hazards/logical",
+    color: "bg-yellow-500",
   },
   {
     title: "Structural Hazards",
@@ -14,10 +14,10 @@ const topics = [
     color: "bg-orange-500",
   },
   {
-    title: "Logical Hazards",
-    description: "RAW, WAR, and RAR data dependencies",
-    href: "/hazards/logical",
-    color: "bg-yellow-500",
+    title: "Control Hazards",
+    description: "Branch prediction, delay slots, and pipeline penalties",
+    href: "/hazards/control",
+    color: "bg-blue-500",
   },
   {
     title: "Dependencies",

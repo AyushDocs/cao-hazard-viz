@@ -144,7 +144,7 @@ export default function ControlHazardsPage() {
           <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 overflow-x-auto">
             <div className="min-w-[400px]">
               <div className="flex mb-2">
-                <div className="w-24 text-xs text-zinc-500">Cycle→</div>
+                <div className="w-32 text-xs text-zinc-500">Cycle→</div>
                 {[0, 1, 2, 3, 4, 5, 6].map((c) => (
                   <div key={c} className="flex-1 text-center text-xs text-zinc-500">
                     {c}
@@ -153,7 +153,7 @@ export default function ControlHazardsPage() {
               </div>
               {scenario.instructions.map((inst, i) => (
                 <div key={i} className="flex mb-1">
-                  <div className={`w-24 text-xs font-mono truncate pr-2 ${
+                  <div className={`w-32 text-xs font-mono truncate pr-2 ${
                     inst.stalled ? "text-red-400" :
                     inst.flushed ? "text-orange-400" : "text-zinc-300"
                   }`}>
@@ -163,20 +163,23 @@ export default function ControlHazardsPage() {
                     {[0, 1, 2, 3, 4, 5, 6].map((c) => {
                       const stage = c - i;
                       const active = stage >= 0 && stage < 5 && !inst.stalled && !inst.flushed;
+                      const stageNames = ["IF", "ID", "EX", "MEM", "WB"];
+                      const stageName = active ? stageNames[stage] : "";
                       return (
                         <div
                           key={c}
-                          className={`h-6 rounded ${
+                          className={`h-6 rounded flex items-center justify-center text-xs border ${
                             active
-                              ? stage === 0 ? "bg-blue-500" :
-                                stage === 1 ? "bg-green-500" :
-                                stage === 2 ? "bg-yellow-500" :
-                                stage === 3 ? "bg-orange-500" : "bg-purple-500"
+                              ? "bg-zinc-800 border-zinc-700"
                               : inst.stalled
-                              ? "stall-bubble"
-                              : "bg-zinc-800"
+                              ? "bg-zinc-900 border-red-900"
+                              : "bg-zinc-900 border-zinc-800"
                           }`}
-                        />
+                        >
+                          <span className={active ? "text-zinc-400" : "text-zinc-600"}>
+                            {stageName}
+                          </span>
+                        </div>
                       );
                     })}
                   </div>

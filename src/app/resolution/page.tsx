@@ -81,18 +81,19 @@ export default function ResolutionPage() {
                 <div className="flex-1 flex gap-1">
                   {Array.from({ length: currentStrategy.cycles }).map((_, c) => {
                     const inCycle = inst.cycles.includes(c);
+                    const stageName = inCycle ? stages[c - inst.cycles[0]] : "";
                     return (
                       <div
                         key={c}
-                        className={`h-8 rounded flex items-center justify-center text-xs ${
+                        className={`h-8 rounded flex items-center justify-center text-xs border ${
                           inCycle
-                            ? i === 0
-                              ? "bg-green-500"
-                              : "bg-purple-500"
-                            : "bg-zinc-800"
+                            ? "bg-zinc-800 border-zinc-700"
+                            : "bg-zinc-900 border-zinc-800"
                         } ${c === cycle && inCycle ? "ring-2 ring-white" : ""}`}
                       >
-                        {inCycle ? stages[c - inst.cycles[0]] : ""}
+                        <span className={inCycle ? "text-zinc-400" : "text-zinc-600"}>
+                          {stageName}
+                        </span>
                       </div>
                     );
                   })}

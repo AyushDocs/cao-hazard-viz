@@ -170,7 +170,7 @@ export default function PipelinePage() {
           <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 overflow-x-auto">
             <div className="min-w-[500px]">
               <div className="flex mb-2">
-                <div className="w-24 text-xs text-zinc-500">Cycle→</div>
+                <div className="w-28 text-xs text-zinc-500">Cycle→</div>
                 {[...Array(totalCycles)].map((_, c) => (
                   <div
                     key={c}
@@ -185,27 +185,29 @@ export default function PipelinePage() {
 
               {instructions.map((inst, i) => (
                 <div key={i} className="flex mb-1">
-                  <div className="w-24 text-xs font-mono truncate pr-2 text-zinc-300 pt-1">
+                  <div className="w-28 text-xs font-mono truncate pr-2 text-zinc-300 pt-1">
                     I{i + 1}: {inst.name}
                   </div>
                   <div className="flex-1 flex gap-1">
                     {[...Array(totalCycles)].map((_, c) => {
                       const stage = getInstructionPosition(i, c);
-                      const isActive = c === cycle && stage;
                       const hasHazard = inst.regs.length > 0 && i === 1 && !forwarding;
+                      const isStall = hasHazard && !stage && c >= i + 1 && c <= i + 3;
 
                       return (
                         <div
                           key={c}
-                          className={`h-8 rounded flex items-center justify-center text-xs transition-all ${
+                          className={`h-8 rounded flex items-center justify-center text-xs border transition-all ${
                             stage
-                              ? `${stage.color} ${c === cycle ? "ring-2 ring-white" : ""}`
-                              : hasHazard && c >= i + 1 && c <= i + 3
-                              ? "stall-bubble"
-                              : "bg-zinc-800"
+                              ? "bg-zinc-800 border-zinc-700"
+                              : isStall
+                              ? "bg-zinc-900 border-red-900"
+                              : "bg-zinc-900 border-zinc-800"
                           }`}
                         >
-                          {stage ? stage.name : ""}
+                          <span className={stage ? "text-zinc-400" : isStall ? "text-red-400 text-[10px]" : "text-zinc-600"}>
+                            {stage ? stage.name : isStall ? "STALL" : ""}
+                          </span>
                         </div>
                       );
                     })}
