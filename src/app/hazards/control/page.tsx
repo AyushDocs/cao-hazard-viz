@@ -142,24 +142,26 @@ export default function ControlHazardsPage() {
         <div>
           <h3 className="text-lg font-semibold mb-4">Time-Space Diagram</h3>
           <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 overflow-x-auto">
-            <div className="min-w-[400px]">
+            <div className="min-w-[500px]">
               <div className="flex mb-2">
-                <div className="w-32 text-xs text-zinc-500">Cycle→</div>
-                {[0, 1, 2, 3, 4, 5, 6].map((c) => (
-                  <div key={c} className="flex-1 text-center text-xs text-zinc-500">
-                    {c}
-                  </div>
-                ))}
+                <div className="w-32 flex-shrink-0 text-xs text-zinc-500 text-right pr-2">Cycle→</div>
+                <div className="flex flex-1">
+                  {[0, 1, 2, 3, 4, 5, 6].map((c) => (
+                    <div key={c} className="flex-1 text-center text-xs text-zinc-500">
+                      {c}
+                    </div>
+                  ))}
+                </div>
               </div>
               {scenario.instructions.map((inst, i) => (
                 <div key={i} className="flex mb-1">
-                  <div className={`w-32 text-xs font-mono truncate pr-2 ${
+                  <div className={`w-32 flex-shrink-0 text-xs font-mono truncate pr-2 text-right ${
                     inst.stalled ? "text-red-400" :
                     inst.flushed ? "text-orange-400" : "text-zinc-300"
                   }`}>
                     {inst.stalled ? "STALL" : inst.flushed ? "FLUSH" : inst.name}
                   </div>
-                  <div className="flex-1 flex gap-1">
+                  <div className="flex flex-1">
                     {[0, 1, 2, 3, 4, 5, 6].map((c) => {
                       const stage = c - i;
                       const active = stage >= 0 && stage < 5 && !inst.stalled && !inst.flushed;
@@ -168,7 +170,7 @@ export default function ControlHazardsPage() {
                       return (
                         <div
                           key={c}
-                          className={`h-6 rounded flex items-center justify-center text-xs border ${
+                          className={`flex-1 h-6 rounded flex items-center justify-center text-xs border ${
                             active
                               ? "bg-zinc-800 border-zinc-700"
                               : inst.stalled

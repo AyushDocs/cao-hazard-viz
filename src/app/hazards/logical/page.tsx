@@ -108,27 +108,29 @@ export default function LogicalHazardsPage() {
         <div>
           <h3 className="text-lg font-semibold mb-4">Time-Space Diagram</h3>
           <div className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 overflow-x-auto">
-            <div className="min-w-[500px]">
+            <div className="min-w-[600px]">
               <div className="flex mb-2">
-                <div className="w-28 text-xs text-zinc-500">Cycle→</div>
-                {[...Array(totalCycles)].map((_, c) => (
-                  <div
-                    key={c}
-                    className={`flex-1 text-center text-xs ${
-                      c === cycle ? "text-indigo-400 font-bold" : "text-zinc-500"
-                    }`}
-                  >
-                    {c}
-                  </div>
-                ))}
+                <div className="w-32 flex-shrink-0 text-xs text-zinc-500 text-right pr-2">Cycle→</div>
+                <div className="flex flex-1">
+                  {[...Array(totalCycles)].map((_, c) => (
+                    <div
+                      key={c}
+                      className={`flex-1 text-center text-xs ${
+                        c === cycle ? "text-indigo-400 font-bold" : "text-zinc-500"
+                      }`}
+                    >
+                      {c}
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {hazard.instructions.map((inst, i) => (
                 <div key={i} className="flex mb-1">
-                  <div className="w-28 text-xs font-mono truncate pr-2 text-zinc-300">
+                  <div className="w-32 flex-shrink-0 text-xs font-mono truncate pr-2 text-zinc-300 text-right">
                     {inst.name}
                   </div>
-                  <div className="flex-1 flex gap-1">
+                  <div className="flex flex-1">
                     {[...Array(totalCycles)].map((_, c) => {
                       const content = getCellContent(i, c);
                       const isCurrentCycle = c === cycle;
@@ -138,7 +140,7 @@ export default function LogicalHazardsPage() {
                       return (
                         <div
                           key={c}
-                          className={`h-8 rounded flex items-center justify-center text-xs font-medium border ${
+                          className={`flex-1 h-8 rounded flex items-center justify-center text-xs font-medium border ${
                             isStall
                               ? "bg-zinc-800 border-red-500 text-red-400"
                               : isExecuting
